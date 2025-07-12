@@ -22,6 +22,7 @@ jobs:
       - name: Deploy to FTP server
         run: |
           lftp -f "
+          set ssl:verify-certificate no
           open ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PORT }}
           mirror -R ./ /green-code.alimul.id/ --ignore-time
           quit
