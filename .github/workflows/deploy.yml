@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v2
 
       # Install FTP client
-      # - name: Install FTP client
-      #   run: sudo apt-get install lftp
+      - name: Install FTP client
+        run: sudo apt-get install lftp
 
       # Deploy ke server menggunakan FTP
       - name: Deploy to FTP server
