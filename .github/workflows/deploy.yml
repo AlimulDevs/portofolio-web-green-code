@@ -23,6 +23,6 @@ jobs:
         run: |
           lftp -f "
           open ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }}:${{ secrets.FTP_PORT }}
-          mirror -R ./green-code.alimul.id/ /green-code.alimul.id/ --ignore-time
+          mirror -R ./ /green-code.alimul.id/ --ignore-time
           quit
           "
