@@ -1,38 +1,41 @@
-name: CI/CD for HTML/CSS App via SSH
+name: CI/CD for HTML/CSS App
 
 on:
   push:
     branches:
-      - main  # Trigger workflow ketika ada push ke branch main
+      - main  # Workflow ini hanya akan dijalankan pada push ke branch 'main'
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Menjalankan job ini pada runner Ubuntu
 
     steps:
       # Checkout kode dari repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Install OpenSSH untuk koneksi SSH
-      - name: Install SSH
-        run: sudo apt-get install openssh-client
-
-      # Setup SSH key
-      - name: Add SSH key to the agent
+      # Menambahkan SSH key untuk koneksi ke server cPanel
+      - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key yang ada di GitHub Secrets
 
-      # Add SSH known hosts to avoid SSH authenticity prompt
+      # Menambahkan server ke SSH known hosts (untuk menghindari warning)
       - name: Add SSH known hosts
         run: |
-          ssh-keyscan -H 103.219.251.163 >> ~/.ssh/known_hosts
+          ssh-keyscan -H 103.219.251.163 >> ~/.ssh/known_hosts  # Ganti dengan IP server kamu
 
-      # Deploy to cPanel via SSH
+      # Deploy ke cPanel melalui SSH
       - name: Deploy to cPanel via SSH
         run: |
-          scp -i ~/.ssh/id_rsa -r ./public/* user@your-cpanel-server.com:/home/username/public_html
+          ssh -i ~/.ssh/id_rsa user@103.219.251.163 << 'EOF'
+            # Pindah ke folder yang sesuai di server
+            cd ~/green-code.alimul.id
+            # Menarik pembaruan dari GitHub
+            git pull origin main
+            # Misalkan kamu perlu mengatur file di folder public_html
+            cp -r * ~/public_html/
+            EOF
