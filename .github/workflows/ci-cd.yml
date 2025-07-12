@@ -1,0 +1,38 @@
+name: CI/CD for HTML/CSS App via SSH
+
+on:
+  push:
+    branches:
+      - main  # Trigger workflow ketika ada push ke branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout kode dari repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install OpenSSH untuk koneksi SSH
+      - name: Install SSH
+        run: sudo apt-get install openssh-client
+
+      # Setup SSH key
+      - name: Add SSH key to the agent
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Add SSH known hosts to avoid SSH authenticity prompt
+      - name: Add SSH known hosts
+        run: |
+          ssh-keyscan -H your-cpanel-server.com >> ~/.ssh/known_hosts
+
+      # Deploy to cPanel via SSH
+      - name: Deploy to cPanel via SSH
+        run: |
+          scp -i ~/.ssh/id_rsa -r ./public/* user@your-cpanel-server.com:/home/username/public_html
