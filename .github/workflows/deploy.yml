@@ -28,6 +28,11 @@ jobs:
       - name: make folder
         run: mkdir tes
 
+      # Jalankan npm init (untuk menginisialisasi proyek Node.js)
+      - name: Run npm init
+        run: |
+          npm init -y 
+
       # Deploy ke server menggunakan FTP
       - name: Deploy to FTP server
         run: |
