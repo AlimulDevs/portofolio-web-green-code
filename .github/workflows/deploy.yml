@@ -18,6 +18,10 @@ jobs:
       - name: Install FTP client
         run: sudo apt-get install lftp
 
+      # make folder tes
+      - name: make folder
+        run: mkdir tes
+
       # Deploy ke server menggunakan FTP
       - name: Deploy to FTP server
         run: |
